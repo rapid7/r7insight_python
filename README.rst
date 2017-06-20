@@ -10,7 +10,6 @@ Rapid7 Insight Logger
 This is a plugin library to enable logging to Rapid7 Insight from the Python Logger.
 Additionally this plugin allows the user to get an overview of methods being executed,
 their execution time, as well as CPU and Memory statistics.
-Rapid7 Insight is a real-time log management service on the cloud.
 More info at https://www.rapid7.com/solutions/it-operations/. Note that this plugin is
 **asynchronous**.
 
