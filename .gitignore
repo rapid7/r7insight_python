@@ -1,0 +1,4 @@
+*.pyc
+Logentries.egg-info
+dist/*.egg
+.idea
