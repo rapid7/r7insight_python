@@ -1,22 +1,23 @@
-Logentries Logger
+Rapid7 Insight Logger
 =================
 
-*This plug-in is no officially supported or maintained by Logentries.*
+*This plug-in is no officially supported or maintained by Rapid7.*
 
-*We currently have a volunteer maintainer for this project, but if you have major issues with the plug-in, please contact support@logentries.com.*
+*We currently have a volunteer maintainer for this project, but if you have major issues with the
+ plug-in, please contact support@rapid7.com.*
 
 
-This is a plugin library to enable logging to Logentries from the Python Logger.
+This is a plugin library to enable logging to Rapid7 Insight from the Python Logger.
 Additionally this plugin allows the user to get an overview of methods being executed,
 their execution time, as well as CPU and Memory statistics.
-Logentries is a real-time log management service on the cloud.
-More info at https://logentries.com. Note that this plugin is
+Rapid7 Insight is a real-time log management service on the cloud.
+More info at https://www.rapid7.com/solutions/it-operations/. Note that this plugin is
 **asynchronous**.
 
 Setup
 -----
 
-To use this library, you must first create an account on Logentries.
+To use this library, you must first create an account on Rapid7 Insight.
 This will only take a few moments.
 
 Install
@@ -24,7 +25,7 @@ Install
 
 To install this library, use the following command:
 
-``pip install logentries``
+``pip install r7insight_python``
 
 Usage
 -----
@@ -34,12 +35,12 @@ Usage
     #!/usr/bin/env python
 
     import logging
-    from logentries import LogentriesHandler
+    from r7insight import R7InsightHandler
 
 
-    log = logging.getLogger('logentries')
+    log = logging.getLogger('r7insight')
     log.setLevel(logging.INFO)
-    test = LogentriesHandler(LOGENTRIES_TOKEN)
+    test = R7InsightHandler(TOKEN, REGION)
 
     log.addHandler(test)
 
@@ -56,10 +57,10 @@ Usage with metric functionality
 
     import time
     import logging
-    from logentries import LogentriesHandler, metrics
+    from r7insight import R7InsightHandler, metrics
 
 
-    TEST = metrics.Metric(LOGENTRIES_METRIC_TOKEN)
+    TEST = metrics.Metric(METRIC_TOKEN, REGION)
 
     @TEST.metric()
     def function_one(t):
@@ -80,14 +81,18 @@ This decorator function is used to log the execution time of given function. In 
 Configure
 ---------
 
-The parameter ``LOGENTRIES_TOKEN`` needs to be filled in to point to a
-file in your Logentries account.
+The parameter ``TOKEN`` needs to be filled in to point to a
+file in your Insight account.
 
-The parameter ``LOGENTRIES_METRIC_TOKEN`` needs to be filled in to point to a metric collection file in your Logentries account. However, please note that metric data can be send to LOGENTRIES_TOKEN and merged with other standard logs.
+The parameter ``METRIC_TOKEN`` needs to be filled in to point to a metric collection file in your
+Insight account. However, please note that metric data can be send to TOKEN and merged with
+other standard logs.
 
-In your Logentries account, create a logfile, selecting ``Token TCP`` as
+The parameter ``REGION`` needs to be filled with the region your log is located in. i.e: 'eu', 'us'
+
+In your R7Insight account, create a logfile, selecting ``Token TCP`` as
 the source\_type. This will print a Token UUID. This
-is the value to use for ``LOGENTRIES_TOKEN`` or ``LOGENTRIES_METRIC_TOKEN``.
+is the value to use for ``TOKEN`` or ``METRIC_TOKEN``.
 
 The appender will attempt to send your log data over TLS over port 443,
 otherwise it will send over port 80.

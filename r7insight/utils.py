@@ -1,27 +1,26 @@
 # coding: utf-8
 # vim: set ts=4 sw=4 et:
-""" This file contains some utils for connecting to Logentries
+""" This file contains some utils for connecting to Rapid7 Insight
     as well as storing logs in a queue and sending them."""
 
 VERSION = '2.0.7'
 
-from logentries import helpers as le_helpers
+from r7insight import helpers as le_helpers
 
 import logging
 import threading
 import socket
 import random
 import time
-import sys
 
 import certifi
 
 
 # Size of the internal event queue
 QUEUE_SIZE = 32768
-# Logentries API server address
-LE_ENDPOINT_DEFAULT = ".data.logs.insight.rapid7.com"
-# Port number for token logging to Logentries API server
+# Rapid7 Logs API address
+LE_ENDPOINT_DEFAULT = "{}.data.logs.insight.rapid7.com"
+# Port number for token logging to Rapid7 Logs API server
 LE_PORT_DEFAULT = 80
 LE_TLS_PORT_DEFAULT = 443
 # Minimal delay between attempts to reconnect in seconds
@@ -35,7 +34,7 @@ LINE_SEP = le_helpers.to_unicode('\u2028')
 # LE appender signature - used for debugging messages
 LE = "LE: "
 # Error message displayed when an incorrect Token has been detected
-INVALID_TOKEN = ("\n\nIt appears the LOGENTRIES_TOKEN "
+INVALID_TOKEN = ("\n\nIt appears the R7INSIGHT_TOKEN "
                  "parameter you entered is incorrect!\n\n")
 
 INVALID_REGION = ("\n\nIt appears the REGION is invalid\n\n")
@@ -49,10 +48,10 @@ class PlainTextSocketAppender(threading.Thread):
     def __init__(self, verbose=True, le_data=LE_ENDPOINT_DEFAULT, le_port=LE_PORT_DEFAULT, le_tls_port=LE_TLS_PORT_DEFAULT):
         threading.Thread.__init__(self)
 
-        # Logentries DATA server address
+        # Rapid7 Logs DATA server address
         self.le_data = le_data
 
-        # Port number for token logging to Logentries API server
+        # Port number for token logging to Rapid7 Logs API server
         self.le_port = le_port
         self.le_tls_port = le_tls_port
 
@@ -79,7 +78,7 @@ class PlainTextSocketAppender(threading.Thread):
                 return
             except Exception:
                 if self.verbose:
-                    dbg("Unable to connect to Logentries")
+                    dbg("Unable to connect to R7Insight")
 
             root_delay *= 2
             if(root_delay > MAX_DELAY):
@@ -124,7 +123,7 @@ class PlainTextSocketAppender(threading.Thread):
                     break
         except KeyboardInterrupt:
             if self.verbose:
-                dbg("Logentries asynchronous socket client interrupted")
+                dbg("R7Insight asynchronous socket client interrupted")
 
         self.close_connection()
 
@@ -161,7 +160,7 @@ else:
             self._conn = sock
 
 
-class LogentriesHandler(logging.Handler):
+class R7InsightHandler(logging.Handler):
     def __init__(self, token, region, use_tls=True, verbose=True, format=None, le_data=LE_ENDPOINT_DEFAULT, le_port=LE_PORT_DEFAULT, le_tls_port=LE_TLS_PORT_DEFAULT):
         logging.Handler.__init__(self)
         self.token = token
@@ -181,6 +180,8 @@ class LogentriesHandler(logging.Handler):
                 dbg(INVALID_REGION)
             self.good_config = False
 
+        le_data = le_data.format(region)
+
         if format is None:
             format = logging.Formatter('%(asctime)s : %(levelname)s, %(message)s',
                                        '%a %b %d %H:%M:%S %Z %Y')
@@ -188,9 +189,9 @@ class LogentriesHandler(logging.Handler):
 
         self.setLevel(logging.DEBUG)
         if use_tls and ssl_enabled:
-            self._thread = TLSSocketAppender(verbose=verbose, le_data=region + le_data, le_port=le_port, le_tls_port=le_tls_port)
+            self._thread = TLSSocketAppender(verbose=verbose, le_data=le_data, le_port=le_port, le_tls_port=le_tls_port)
         else:
-            self._thread = SocketAppender(verbose=verbose, le_data=region + le_data, le_port=le_port, le_tls_port=le_tls_port)
+            self._thread = SocketAppender(verbose=verbose, le_data=le_data, le_port=le_port, le_tls_port=le_tls_port)
 
     def flush(self):
         # wait for all queued logs to be send
@@ -205,7 +206,7 @@ class LogentriesHandler(logging.Handler):
             try:
                 self._thread.start()
                 if self.verbose:
-                    dbg("Starting Logentries Asynchronous Socket Appender")
+                    dbg("Starting Rapid7 Insight Asynchronous Socket Appender")
             except RuntimeError: # It's already started.
                 pass
 
