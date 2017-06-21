@@ -1,25 +1,25 @@
-from logentries import LogentriesHandler
+from r7insight import R7InsightHandler
 from threading import Lock
 from functools import wraps
 import logging
 import time
-import sys
 import psutil
 
 glob_time = 0
 glob_name = 0
 
-log = logging.getLogger('logentries')
+log = logging.getLogger('r7insight')
 log.setLevel(logging.INFO)
 
-class Metric(object):
 
-    def __init__(self, token):
+class Metric(object):
+    def __init__(self, token, region):
         self._count = 0.0
         self._sum = 0.0
         self._lock = Lock()
         self.token = token
-        handler = LogentriesHandler(token)
+        self.region = region
+        handler = R7InsightHandler(token, region)
         log.addHandler(handler)
 
     def observe(self, amount):
