@@ -1,12 +1,6 @@
 Rapid7 Insight Logger
 =================
 
-*This plug-in is no officially supported or maintained by Rapid7.*
-
-*We currently have a volunteer maintainer for this project, but if you have major issues with the
- plug-in, please contact support@rapid7.com.*
-
-
 This is a plugin library to enable logging to Rapid7 Insight from the Python Logger.
 Additionally this plugin allows the user to get an overview of methods being executed,
 their execution time, as well as CPU and Memory statistics.
