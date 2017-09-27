@@ -53,7 +53,7 @@ Usage with metric functionality
     from r7insight import R7InsightHandler, metrics
 
 
-    TEST = metrics.Metric(METRIC_TOKEN, REGION)
+    TEST = metrics.Metric(TOKEN, REGION)
 
     @TEST.metric()
     def function_one(t):
@@ -77,15 +77,11 @@ Configure
 The parameter ``TOKEN`` needs to be filled in to point to a
 file in your Insight account.
 
-The parameter ``METRIC_TOKEN`` needs to be filled in to point to a metric collection file in your
-Insight account. However, please note that metric data can be send to TOKEN and merged with
-other standard logs.
-
 The parameter ``REGION`` needs to be filled with the region your log is located in. i.e: 'eu', 'us'
 
 In your R7Insight account, create a logfile, selecting ``Token TCP`` as
 the source\_type. This will print a Token UUID. This
-is the value to use for ``TOKEN`` or ``METRIC_TOKEN``.
+is the value to use for ``TOKEN``.
 
 The appender will attempt to send your log data over TLS over port 443,
 otherwise it will send over port 80.
