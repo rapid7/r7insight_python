@@ -7,7 +7,7 @@ with open('README.rst', 'r') as f:
 
 setup(
     name='r7insight_python',
-    version='0.9.2',
+    version='1.0.0',
     author='Rapid7',
     author_email='InsightOpsTeam@rapid7.com',
     packages=['r7insight'],
