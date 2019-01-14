@@ -8,8 +8,8 @@ with open('README.rst', 'r') as f:
 setup(
     name='r7insight_python',
     version='0.9.2',
-    author='Mark Lacomber',
-    author_email='marklacomber@gmail.com',
+    author='Rapid7',
+    author_email='InsightOpsTeam@rapid7.com',
     packages=['r7insight'],
     scripts=[],
     url='http://pypi.python.org/pypi/R7Insight/',
@@ -23,6 +23,6 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2'
-    ]
-)
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3'
+    ])

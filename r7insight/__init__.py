@@ -1,1 +1,1 @@
-from utils import R7InsightHandler
+from .utils import R7InsightHandler

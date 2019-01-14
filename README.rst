@@ -1,5 +1,5 @@
 Rapid7 Insight Logger
-=================
+=====================
 
 This is a plugin library to enable logging to Rapid7 Insight from the Python Logger.
 Additionally this plugin allows the user to get an overview of methods being executed,
