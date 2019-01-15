@@ -1,5 +1,5 @@
 Rapid7 Insight Logger
-=================
+=====================
 
 This is a plugin library to enable logging to Rapid7 Insight from the Python Logger.
 Additionally this plugin allows the user to get an overview of methods being executed,
@@ -69,8 +69,6 @@ Metric.Time()
 
 This decorator function is used to log the execution time of given function. In the above example ``@TEST.time()`` will wrap ``function_one`` and send log message containing the name and execution time of this function.
 
-
-
 Configure
 ---------
 
@@ -83,10 +81,13 @@ In your R7Insight account, create a logfile, selecting ``Token TCP`` as
 the source\_type. This will print a Token UUID. This
 is the value to use for ``TOKEN``.
 
-The appender will attempt to send your log data over TLS over port 443,
-otherwise it will send over port 80.
+The appender will attempt to send your log data over TLS over port 443. You can also choose to not
+use TLS, in which case it will be sent over port 80.
+If the ``allow_plaintext_fallback`` option in the constructor is set to ``True``, then the library
+will automatically fall back to an insecure connection on port 80 if TLS is not supported on the
+host system.
 
-You are now ready to start logging
+You are now ready to start logging.
 
 Contact Support
 ===============

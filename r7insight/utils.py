@@ -131,13 +131,12 @@ SocketAppender = PlainTextSocketAppender
 
 try:
     import ssl
-    ssl_enabled = True
+    ssl_supported = True
 except ImportError:  # for systems without TLS support.
-    ssl_enabled = False
-    dbg("Unable to import ssl module. Will send over port 80.")
+    ssl_supported = False
+    dbg("Unable to import ssl module.")
 else:
     class TLSSocketAppender(PlainTextSocketAppender):
-
         def open_connection(self):
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock = ssl.wrap_socket(
@@ -146,11 +145,7 @@ else:
                 certfile=None,
                 server_side=False,
                 cert_reqs=ssl.CERT_REQUIRED,
-                ssl_version=getattr(
-                    ssl,
-                    'PROTOCOL_TLSv1_2',
-                    ssl.PROTOCOL_TLSv1
-                ),
+                ssl_version=ssl.PROTOCOL_TLSv1_2,
                 ca_certs=certifi.where(),
                 do_handshake_on_connect=True,
                 suppress_ragged_eofs=True,
@@ -159,9 +154,10 @@ else:
             sock.connect((self.le_data, self.le_tls_port))
             self._conn = sock
 
-
 class R7InsightHandler(logging.Handler):
-    def __init__(self, token, region, use_tls=True, verbose=True, format=None, le_data=LE_ENDPOINT_DEFAULT, le_port=LE_PORT_DEFAULT, le_tls_port=LE_TLS_PORT_DEFAULT):
+    def __init__(self, token, region, use_tls=True, verbose=True, format=None,
+    le_data=LE_ENDPOINT_DEFAULT, le_port=LE_PORT_DEFAULT, le_tls_port=LE_TLS_PORT_DEFAULT,
+    allow_plaintext_fallback=False):
         logging.Handler.__init__(self)
         self.token = token
         self.region = region
@@ -188,10 +184,12 @@ class R7InsightHandler(logging.Handler):
         self.setFormatter(format)
 
         self.setLevel(logging.DEBUG)
-        if use_tls and ssl_enabled:
-            self._thread = TLSSocketAppender(verbose=verbose, le_data=le_data, le_port=le_port, le_tls_port=le_tls_port)
-        else:
+
+        if not use_tls or (not ssl_supported and allow_plaintext_fallback):
             self._thread = SocketAppender(verbose=verbose, le_data=le_data, le_port=le_port, le_tls_port=le_tls_port)
+            return
+
+        self._thread = TLSSocketAppender(verbose=verbose, le_data=le_data, le_port=le_port, le_tls_port=le_tls_port)
 
     def flush(self):
         # wait for all queued logs to be send
