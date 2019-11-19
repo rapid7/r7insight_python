@@ -88,8 +88,3 @@ will automatically fall back to an insecure connection on port 80 if TLS is not 
 host system.
 
 You are now ready to start logging.
-
-Contact Support
-===============
-
-Please email our support team at support@rapid7.com if you need any help.
