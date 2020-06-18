@@ -23,9 +23,9 @@ LE_ENDPOINT_DEFAULT = "{}.data.logs.insight.rapid7.com"
 # Port number for token logging to Rapid7 Logs API server
 LE_PORT_DEFAULT = 80
 LE_TLS_PORT_DEFAULT = 443
-# Minimal delay between attempts to reconnect in seconds
+# Minimum delay (in seconds) between attempts to reconnect
 MIN_DELAY = 0.1
-# Maximal delay between attempts to recconect in seconds
+# Maximum delay (in seconds) between attempts to reconnect
 MAX_DELAY = 10
 # Unicode Line separator character   \u2028
 LINE_SEP = le_helpers.to_unicode('\u2028')
