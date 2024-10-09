@@ -139,20 +139,18 @@ else:
     class TLSSocketAppender(PlainTextSocketAppender):
         def open_connection(self):
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock = ssl.wrap_socket(
-                sock=sock,
-                keyfile=None,
-                certfile=None,
-                server_side=False,
-                cert_reqs=ssl.CERT_REQUIRED,
-                ssl_version=ssl.PROTOCOL_TLSv1_2,
-                ca_certs=certifi.where(),
-                do_handshake_on_connect=True,
-                suppress_ragged_eofs=True,
-            )
 
-            sock.connect((self.le_data, self.le_tls_port))
-            self._conn = sock
+            # Create an SSL context
+            context = ssl.create_default_context(cafile=certifi.where())
+            context.verify_mode = ssl.CERT_REQUIRED
+            context.minimum_version = ssl.TLSVersion.TLSv1_2
+
+            # Wrap the socket with SSL
+            ssock = context.wrap_socket(sock, server_hostname=self.le_data)
+
+            # Connect to the server
+            ssock.connect((self.le_data, self.le_tls_port))
+            self._conn = ssock
 
 class R7InsightHandler(logging.Handler):
     def __init__(self, token, region, use_tls=True, verbose=True, format=None,
