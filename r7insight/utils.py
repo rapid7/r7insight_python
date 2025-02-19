@@ -9,6 +9,7 @@ from r7insight import helpers as le_helpers
 
 import logging
 import threading
+import traceback
 import socket
 import random
 import time
@@ -79,6 +80,7 @@ class PlainTextSocketAppender(threading.Thread):
             except Exception:
                 if self.verbose:
                     dbg("Unable to connect to R7Insight")
+                    dbg(traceback.format_exc())
 
             root_delay *= 2
             if(root_delay > MAX_DELAY):
@@ -139,17 +141,14 @@ else:
     class TLSSocketAppender(PlainTextSocketAppender):
         def open_connection(self):
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock = ssl.wrap_socket(
-                sock=sock,
-                keyfile=None,
-                certfile=None,
-                server_side=False,
-                cert_reqs=ssl.CERT_REQUIRED,
-                ssl_version=ssl.PROTOCOL_TLSv1_2,
-                ca_certs=certifi.where(),
-                do_handshake_on_connect=True,
-                suppress_ragged_eofs=True,
-            )
+
+            # Create an SSL context
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            context.verify_mode = ssl.CERT_REQUIRED
+            context.load_verify_locations(certifi.where())
+
+            # Wrap the socket
+            sock = context.wrap_socket(sock, server_hostname=self.le_data)
 
             sock.connect((self.le_data, self.le_tls_port))
             self._conn = sock
